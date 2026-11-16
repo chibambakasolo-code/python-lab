@@ -119,20 +119,47 @@
             color: #70757a;
         }
 
-        .cell textarea {
-            display: block;
-            width: 100%;
-            min-height: 65px;
-            resize: vertical;
-            border: none;
-            outline: none;
-            padding: 8px;
-            background: #f8f9fa;
-            color: #202124;
-            font-family: monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
+       
+.cell:focus-within {
+    border-color: #8ab4f8;
+}
+
+.cell textarea {
+    display: block;
+    width: 100%;
+    min-height: 65px;
+    height: auto;
+    resize: none;
+    overflow: hidden;
+    border: none;
+    outline: none;
+    padding: 8px;
+    background: #f8f9fa;
+    color: #202124;
+    font-family: monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre;
+}
+
+.cell textarea:focus {
+    background: #f1f3f4;
+}
+
+.output {
+    margin: 8px 0 0;
+    padding: 9px 8px;
+    border-top: 1px solid #eee;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: monospace;
+    font-size: 13px;
+    color: #202124;
+}
+
+.output[hidden] {
+    display: none;
+}
 
         .cell textarea:focus {
             background: #f1f3f4;
