@@ -1,35 +1,132 @@
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Python Lab</title>
 
     <script src="https://cdn.jsdelivr.net/pyodide/v314.0.8/full/pyodide.js"></script>
     <script src="app.js" defer></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f5f7;
+            color: #20242b;
+            max-width: 900px;
+            margin: auto;
+            padding: 24px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #status {
+            color: #16834a;
+            font-size: 14px;
+        }
+
+        .cell {
+            background: white;
+            border: 1px solid #d9dde4;
+            border-radius: 10px;
+            padding: 14px;
+            margin: 18px 0;
+        }
+
+        .cell-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .cell textarea {
+            width: 100%;
+            min-height: 110px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid #d9dde4;
+            border-radius: 6px;
+            background: #171b22;
+            color: #e6edf3;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        button {
+            border: none;
+            border-radius: 6px;
+            padding: 9px 14px;
+            cursor: pointer;
+            margin: 3px;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .run-button {
+            background: #176b45;
+            color: white;
+        }
+
+        .delete-button {
+            background: #fce8e8;
+            color: #a52b2b;
+        }
+
+        #add-cell {
+            background: #e2eafa;
+            color: #2458a6;
+            width: 100%;
+            padding: 13px;
+        }
+
+        .output {
+            background: #f0f1f3;
+            border-radius: 6px;
+            padding: 12px;
+            min-height: 35px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-family: monospace;
+        }
+
+        .output-label {
+            font-size: 12px;
+            color: #737b87;
+            margin: 12px 0 6px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Python Lab</h1>
 
-    <p id="status">Loading Python...</p>
+    <header>
+        <h1>Python Lab</h1>
+        <p id="status">Loading Python...</p>
+    </header>
 
-    <textarea id="code" rows="12" cols="60">print("Hello from Python Lab!")
+    <p>Write Python code in cells and execute them individually.</p>
 
-x = 10
-y = 20
+    <main id="notebook"></main>
 
-print("The answer is:", x + y)
-</textarea>
+    <button id="add-cell">+ Add cell</button>
 
-    <br><br>
-
-    <button id="run" disabled>Run Python</button>
-
-    <h2>Output</h2>
-
-    <pre id="output">Your output will appear here.</pre>
 </body>
 </html>
