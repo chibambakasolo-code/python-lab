@@ -194,7 +194,7 @@ function createCell(data = {}) {
 
             "Ctrl-Shift-Backspace": deleteCell,
 
-            "Ctrl-Space": function(cm) {
+            "Ctrl-Shift-Space": function(cm) {
                 cm.showHint({
                     hint: pythonHint,
                     completeSingle: false
