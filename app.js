@@ -209,6 +209,24 @@ function createCell(data = {}) {
 
     });
 
+editor.on("inputRead", function(cm) {
+    const cursor = cm.getCursor();
+    const token = cm.getTokenAt(cursor);
+
+    if (
+        token.type !== "comment" &&
+        token.type !== "string" &&
+        token.string.length >= 2
+    ) {
+        cm.showHint({
+            hint: pythonHint,
+            completeSingle: false
+        });
+    }
+});
+
+cell.codeEditor = editor;
+
     cell.codeEditor = editor;
 
     updateCellNumber(cell);
