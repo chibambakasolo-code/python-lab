@@ -232,6 +232,27 @@
             .cell-content {
                 padding: 6px;
             }
+           /* Keep notebook editors compact */
+            .CodeMirror {
+                height: auto !important;
+                min-height: 0 !important;
+            }
+            
+            .CodeMirror-scroll {
+                height: auto !important;
+                min-height: 0 !important;
+                max-height: none !important;
+                overflow-y: hidden !important;
+            }
+            
+            .CodeMirror-sizer {
+                min-height: 0 !important;
+            }
+            
+            /* Give an empty editor a small starting height */
+            .CodeMirror-lines {
+                padding: 6px 0;
+            } 
         }
     </style>
 </head>
