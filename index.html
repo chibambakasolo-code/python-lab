@@ -6,11 +6,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    
+<!-- Pyodide: Python runtime -->
+<script src="https://cdn.jsdelivr.net/pyodide/v314.0.8/full/pyodide.js"></script>
+
+<!-- CodeMirror: Editor styling -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+
+<!-- CodeMirror: Autocomplete styling -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+
+<!-- CodeMirror: Main editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+
+<!-- Python syntax highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+
+<!-- Automatic bracket completion -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+
+<!-- Matching brackets -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+
+<!-- Autocomplete system -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+
+<!-- Our application -->
+<script src="app.js" defer></script>
+
     <title>Python Lab</title>
 
-    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.8/full/pyodide.js"></script>
-    <script src="app.js" defer></script>
-
+    
     <style>
         * {
             box-sizing: border-box;
