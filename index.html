@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Python Lab</title>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v314.0.8/full/pyodide.js"></script>
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+    <h1>Python Lab</h1>
+
+    <p id="status">Loading Python...</p>
+
+    <textarea id="code" rows="12" cols="60">print("Hello from Python Lab!")
+
+x = 10
+y = 20
+
+print("The answer is:", x + y)
+</textarea>
+
+    <br><br>
+
+    <button id="run" disabled>Run Python</button>
+
+    <h2>Output</h2>
+
+    <pre id="output">Your output will appear here.</pre>
+</body>
+</html>
