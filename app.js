@@ -1,16 +1,9 @@
 
-// ==========================================
-// 1. CONNECT JAVASCRIPT TO THE HTML
-// ==========================================
 
 const status = document.getElementById("status");
 const saveStatus = document.getElementById("save-status");
 const notebook = document.getElementById("notebook");
 const addButton = document.getElementById("add-cell");
-
-// ==========================================
-// 2. VARIABLES USED BY OUR APPLICATION
-// ==========================================
 
 let pyodide = null;
 let nextCellId = 1;
@@ -19,20 +12,14 @@ let isExecuting = false;
 
 const STORAGE_KEY = "python-lab-notebook";
 
-// ==========================================
-// 3. SAVE THE NOTEBOOK
-// ==========================================
-
+// SAVE NOTEBOOK
 function saveNotebook() {
     const cells = [];
 
     document.querySelectorAll(".cell").forEach(cell => {
-        const editor = cell.querySelector("textarea");
-        const output = cell.querySelector(".output");
-
         cells.push({
-            code: editor.value,
-            output: output.textContent,
+            code: cell.querySelector("textarea").value,
+            output: cell.querySelector(".output").textContent,
             executionCount: Number(cell.dataset.executionCount) || 0
         });
     });
@@ -42,25 +29,24 @@ function saveNotebook() {
         saveStatus.textContent = " | Saved locally";
     } catch (error) {
         saveStatus.textContent = " | Save failed";
-        console.error("Notebook saving failed:", error);
+        console.error(error);
     }
 }
 
-// ==========================================
-// 4. UPDATE CELL NUMBERS
-// ==========================================
-
-function updateCellNumber(cell) {
-    const number = cell.querySelector(".cell-number");
-    const count = Number(cell.dataset.executionCount) || 0;
-
-    number.textContent = count ? `In [${count}]` : "In [ ]";
+// AUTOMATICALLY RESIZE EDITOR
+function resizeEditor(editor) {
+    editor.style.height = "auto";
+    editor.style.height = Math.max(65, editor.scrollHeight) + "px";
 }
 
-// ==========================================
-// 5. CREATE A NOTEBOOK CELL
-// ==========================================
+// UPDATE EXECUTION NUMBER
+function updateCellNumber(cell) {
+    const count = Number(cell.dataset.executionCount) || 0;
+    cell.querySelector(".cell-number").textContent =
+        count ? `In [${count}]` : "In [ ]";
+}
 
+// CREATE CELL
 function createCell(data = {}) {
 
     const id = nextCellId++;
@@ -70,93 +56,63 @@ function createCell(data = {}) {
     cell.dataset.cellId = id;
     cell.dataset.executionCount = data.executionCount || 0;
 
-    // Left-hand execution number
     const number = document.createElement("div");
     number.className = "cell-number";
 
-    // Main cell content
     const content = document.createElement("div");
     content.className = "cell-content";
 
-    // Cell toolbar
     const header = document.createElement("div");
     header.className = "cell-header";
 
     const title = document.createElement("strong");
     title.textContent = "PYTHON";
 
-    const controls = document.createElement("div");
+    header.append(title);
 
-    const runButton = document.createElement("button");
-    runButton.textContent = "▶ Run";
-    runButton.className = "run-button";
-    runButton.disabled = !pyodide;
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.className = "delete-button";
-
-    controls.append(runButton, deleteButton);
-    header.append(title, controls);
-
-    // Python code editor
     const editor = document.createElement("textarea");
     editor.placeholder = "Write Python code here...";
     editor.spellcheck = false;
     editor.value = data.code || "";
 
-    // Output section
-    const outputLabel = document.createElement("p");
-    outputLabel.className = "output-label";
-    outputLabel.textContent = "OUTPUT";
-
     const output = document.createElement("pre");
     output.className = "output";
     output.textContent = data.output || "";
+    output.hidden = !data.output;
 
-    // Assemble the cell
-    content.append(header, editor, outputLabel, output);
+    content.append(header, editor, output);
     cell.append(number, content);
 
     notebook.appendChild(cell);
 
     updateCellNumber(cell);
+    resizeEditor(editor);
 
-    // ======================================
-    // 6. EXECUTE THIS CELL
-    // ======================================
-
+    // RUN CELL
     async function runCell() {
 
         if (!pyodide || isExecuting) return;
 
         isExecuting = true;
-
-        document.querySelectorAll(".run-button")
-            .forEach(button => button.disabled = true);
-
+        output.hidden = false;
         output.textContent = "";
 
         try {
 
-            // Capture Python print() output
             pyodide.setStdout({
                 batched: message => {
                     output.textContent += message + "\n";
                 }
             });
 
-            // Capture Python errors
             pyodide.setStderr({
                 batched: message => {
                     output.textContent += message + "\n";
                 }
             });
 
-            // Execute the Python code
             const result = await pyodide.runPythonAsync(editor.value);
 
-            // Display the result of the final expression
             if (result !== undefined) {
                 output.textContent += String(result);
 
@@ -169,10 +125,9 @@ function createCell(data = {}) {
                 output.textContent = "Execution completed.";
             }
 
-            // Record this execution
             executionCount++;
-            cell.dataset.executionCount = executionCount;
 
+            cell.dataset.executionCount = executionCount;
             updateCellNumber(cell);
 
         } catch (error) {
@@ -182,41 +137,46 @@ function createCell(data = {}) {
         } finally {
 
             isExecuting = false;
-
-            document.querySelectorAll(".run-button")
-                .forEach(button => button.disabled = !pyodide);
-
-            // Save code, output and execution count
             saveNotebook();
+
         }
     }
 
-    // ======================================
-    // 7. CONNECT BUTTONS AND KEYBOARD
-    // ======================================
-
-    runButton.addEventListener("click", runCell);
-
-    deleteButton.addEventListener("click", () => {
-        cell.remove();
+    // SAVE AND RESIZE AS USER TYPES
+    editor.addEventListener("input", () => {
+        resizeEditor(editor);
         saveNotebook();
     });
 
-    editor.addEventListener("input", saveNotebook);
-
+    // KEYBOARD SHORTCUTS
     editor.addEventListener("keydown", event => {
+
+        // Ctrl + Enter: Run cell
         if (event.ctrlKey && event.key === "Enter") {
+            event.preventDefault();
             runCell();
         }
+
+        // Ctrl + Shift + Backspace: Delete cell
+        if (
+            event.ctrlKey &&
+            event.shiftKey &&
+            event.key === "Backspace"
+        ) {
+            event.preventDefault();
+
+            if (confirm("Delete this cell?")) {
+                cell.remove();
+                saveNotebook();
+            }
+        }
+
     });
 
     return cell;
 }
 
-// ==========================================
-// 8. RESTORE A PREVIOUS NOTEBOOK
-// ==========================================
-
+// RESTORE NOTEBOOK
 function restoreNotebook() {
 
     try {
@@ -227,7 +187,7 @@ function restoreNotebook() {
 
             const cells = JSON.parse(savedData);
 
-            if (Array.isArray(cells)) {
+            if (Array.isArray(cells) && cells.length > 0) {
 
                 cells.forEach(data => {
                     createCell(data);
@@ -238,19 +198,14 @@ function restoreNotebook() {
                     );
                 });
 
-                if (cells.length > 0) {
-                    return;
-                }
+                return;
             }
         }
 
     } catch (error) {
-
         console.error("Could not restore notebook:", error);
-
     }
 
-    // Create an example cell if no notebook exists
     createCell({
         code: `x = 10
 y = 20
@@ -259,10 +214,7 @@ print(x + y)`
     });
 }
 
-// ==========================================
-// 9. ADD NEW CELLS
-// ==========================================
-
+// ADD CELL
 addButton.addEventListener("click", () => {
 
     const cell = createCell();
@@ -273,10 +225,7 @@ addButton.addEventListener("click", () => {
 
 });
 
-// ==========================================
-// 10. INITIALIZE PYTHON
-// ==========================================
-
+// INITIALIZE PYTHON
 async function initializePython() {
 
     try {
@@ -287,24 +236,14 @@ async function initializePython() {
 
         status.textContent = "Python is ready!";
 
-        document.querySelectorAll(".run-button")
-            .forEach(button => button.disabled = false);
-
     } catch (error) {
 
         status.textContent = "Python failed to load.";
-
         console.error(error);
 
     }
 }
 
-// ==========================================
-// 11. START THE APPLICATION
-// ==========================================
-
-// Restore notebook before starting Python
+// START APPLICATION
 restoreNotebook();
-
-// Start Python
 initializePython();
