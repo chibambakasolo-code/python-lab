@@ -1,11 +1,11 @@
 
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Python Lab</title>
 
     <script src="https://cdn.jsdelivr.net/pyodide/v314.0.8/full/pyodide.js"></script>
@@ -17,62 +17,57 @@
         }
 
         body {
+            margin: 0;
+            background: #f8f9fa;
+            color: #202124;
             font-family: Arial, sans-serif;
-            background: #f4f5f7;
-            color: #20242b;
-            max-width: 900px;
-            margin: auto;
-            padding: 24px;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        #status {
-            color: #16834a;
-            font-size: 14px;
-        }
-
-        .cell {
+            height: 58px;
+            padding: 0 22px;
             background: white;
-            border: 1px solid #d9dde4;
-            border-radius: 10px;
-            padding: 14px;
-            margin: 18px 0;
-        }
-
-        .cell-header {
+            border-bottom: 1px solid #dadce0;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            justify-content: space-between;
         }
 
-        .cell textarea {
-            width: 100%;
-            min-height: 110px;
-            resize: vertical;
-            padding: 12px;
-            border: 1px solid #d9dde4;
-            border-radius: 6px;
-            background: #171b22;
-            color: #e6edf3;
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1.6;
+        header h1 {
+            font-size: 19px;
+            font-weight: 500;
+        }
+
+        #status, #save-status {
+            font-size: 12px;
+            color: #188038;
+        }
+
+        main {
+            max-width: 1050px;
+            margin: 25px auto;
+            padding: 0 16px;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         button {
-            border: none;
-            border-radius: 6px;
-            padding: 9px 14px;
+            border: 1px solid #dadce0;
+            background: white;
+            color: #3c4043;
+            border-radius: 5px;
+            padding: 7px 12px;
             cursor: pointer;
-            margin: 3px;
+            font-size: 13px;
+        }
+
+        button:hover {
+            background: #f1f3f4;
         }
 
         button:disabled {
@@ -80,37 +75,110 @@
             cursor: not-allowed;
         }
 
+        #add-cell {
+            color: #1967d2;
+            border-color: #c6dafc;
+        }
+
+        .cell {
+            display: flex;
+            margin-bottom: 12px;
+            border: 1px solid #dadce0;
+            border-radius: 7px;
+            background: white;
+            overflow: hidden;
+        }
+
+        .cell-number {
+            width: 48px;
+            flex-shrink: 0;
+            padding: 13px 5px;
+            text-align: center;
+            color: #70757a;
+            font-family: monospace;
+            font-size: 12px;
+            border-right: 1px solid #eee;
+        }
+
+        .cell-content {
+            flex: 1;
+            min-width: 0;
+            padding: 8px 10px;
+        }
+
+        .cell-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .cell-header strong {
+            font-size: 11px;
+            font-weight: normal;
+            color: #70757a;
+        }
+
+        .cell textarea {
+            display: block;
+            width: 100%;
+            min-height: 65px;
+            resize: vertical;
+            border: none;
+            outline: none;
+            padding: 8px;
+            background: #f8f9fa;
+            color: #202124;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .cell textarea:focus {
+            background: #f1f3f4;
+        }
+
         .run-button {
-            background: #176b45;
-            color: white;
+            color: #188038;
         }
 
         .delete-button {
-            background: #fce8e8;
-            color: #a52b2b;
-        }
-
-        #add-cell {
-            background: #e2eafa;
-            color: #2458a6;
-            width: 100%;
-            padding: 13px;
-        }
-
-        .output {
-            background: #f0f1f3;
-            border-radius: 6px;
-            padding: 12px;
-            min-height: 35px;
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-            font-family: monospace;
+            color: #d93025;
         }
 
         .output-label {
-            font-size: 12px;
-            color: #737b87;
-            margin: 12px 0 6px;
+            margin: 9px 0 4px;
+            font-size: 10px;
+            color: #70757a;
+        }
+
+        .output {
+            margin: 0;
+            padding: 5px 8px;
+            min-height: 20px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-family: monospace;
+            font-size: 13px;
+            color: #202124;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 0 12px;
+            }
+
+            main {
+                padding: 0 8px;
+            }
+
+            .cell-number {
+                width: 34px;
+            }
+
+            .cell-content {
+                padding: 6px;
+            }
         }
     </style>
 </head>
@@ -119,14 +187,22 @@
 
     <header>
         <h1>Python Lab</h1>
-        <p id="status">Loading Python...</p>
+
+        <div>
+            <span id="status">Loading Python...</span>
+            <span id="save-status"> | Loading notebook...</span>
+        </div>
     </header>
 
-    <p>Write Python code in cells and execute them individually.</p>
+    <main>
 
-    <main id="notebook"></main>
+        <div class="toolbar">
+            <button id="add-cell">+ Code</button>
+        </div>
 
-    <button id="add-cell">+ Add cell</button>
+        <div id="notebook"></div>
+
+    </main>
 
 </body>
 </html>
