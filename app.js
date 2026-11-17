@@ -194,14 +194,25 @@ function createCell(data = {}) {
 
             "Ctrl-Enter": runCell,
 
-            "Enter": function(cm) {
+           "Enter": function(cm) {
     cm.execCommand("newlineAndIndent");
 
     const cursor = cm.getCursor();
     const previousLine = cm.getLine(cursor.line - 1);
+    const currentLine = cm.getLine(cursor.line);
 
     if (previousLine && previousLine.trim().endsWith(":")) {
         cm.indentLine(cursor.line, "add");
+    }
+
+    const closingKeywords = ["else:", "elif ", "except", "finally:"];
+
+    if (
+        closingKeywords.some(keyword =>
+            currentLine.trim().startsWith(keyword)
+        )
+    ) {
+        cm.indentLine(cursor.line, "subtract");
     }
 },
 
