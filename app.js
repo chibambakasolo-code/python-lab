@@ -177,6 +177,8 @@ function createCell(data = {}) {
         lineWrapping: true,
 
         indentUnit: 4,
+        
+        electricChars: true,
 
         tabSize: 4,
 
