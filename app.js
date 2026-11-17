@@ -194,6 +194,17 @@ function createCell(data = {}) {
 
             "Ctrl-Enter": runCell,
 
+            "Enter": function(cm) {
+    cm.execCommand("newlineAndIndent");
+
+    const cursor = cm.getCursor();
+    const previousLine = cm.getLine(cursor.line - 1);
+
+    if (previousLine && previousLine.trim().endsWith(":")) {
+        cm.indentLine(cursor.line, "add");
+    }
+},
+
             "Ctrl-Shift-Backspace": deleteCell,
 
             "Ctrl-Shift-Space": function(cm) {
