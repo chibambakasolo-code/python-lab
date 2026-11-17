@@ -194,27 +194,58 @@ function createCell(data = {}) {
 
             "Ctrl-Enter": runCell,
 
-           "Enter": function(cm) {
-    cm.execCommand("newlineAndIndent");
-
-    const cursor = cm.getCursor();
-    const previousLine = cm.getLine(cursor.line - 1);
-    const currentLine = cm.getLine(cursor.line);
-
-    if (previousLine && previousLine.trim().endsWith(":")) {
-        cm.indentLine(cursor.line, "add");
-    }
-
-    const closingKeywords = ["else:", "elif ", "except", "finally:"];
-
-    if (
-        closingKeywords.some(keyword =>
-            currentLine.trim().startsWith(keyword)
-        )
-    ) {
-        cm.indentLine(cursor.line, "subtract");
-    }
-},
+            
+            "Enter": function(cm) {
+                const cursor = cm.getCursor();
+                const currentLine = cm.getLine(cursor.line);
+                const trimmedLine = currentLine.trim();
+            
+                const leadingWhitespace = currentLine.match(/^\s*/)[0];
+                const indentUnit = cm.getOption("indentUnit");
+                const currentIndent = leadingWhitespace.length;
+            
+                const closingKeywords =
+                    /^(else|elif\b|except\b|finally)\b/;
+            
+                // Calculate the indentation of the current line.
+                const isClosingKeyword = closingKeywords.test(trimmedLine);
+            
+                const lineIndent = isClosingKeyword
+                    ? Math.max(0, currentIndent - indentUnit)
+                    : currentIndent;
+            
+                // Calculate the indentation of the next line.
+                const nextIndent = trimmedLine.endsWith(":")
+                    ? lineIndent + indentUnit
+                    : lineIndent;
+            
+                // Correct the current line's indentation.
+                const correctedLine =
+                    " ".repeat(lineIndent) +
+                    currentLine.slice(leadingWhitespace.length);
+            
+                const cursorCh =
+                    lineIndent +
+                    Math.max(0, cursor.ch - leadingWhitespace.length);
+            
+                cm.replaceRange(
+                    correctedLine,
+                    { line: cursor.line, ch: 0 },
+                    { line: cursor.line, ch: currentLine.length }
+                );
+            
+                // Create the next line with the calculated indentation.
+                cm.replaceRange(
+                    "\n" + " ".repeat(nextIndent),
+                    { line: cursor.line, ch: cursorCh }
+                );
+            
+                cm.setCursor({
+                    line: cursor.line + 1,
+                    ch: nextIndent
+                });
+            },
+            
 
             "Ctrl-Shift-Backspace": deleteCell,
 
