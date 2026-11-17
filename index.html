@@ -263,6 +263,26 @@
                 padding: 0 4px;
                 line-height: 1.4;
             }
+    /* Override CodeMirror's default 300px editor height */
+.cell .CodeMirror {
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+.cell .CodeMirror-scroll {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: hidden !important;
+}
+
+.cell .CodeMirror-sizer {
+    min-height: 0 !important;
+}
+
+.cell .CodeMirror-lines {
+    padding: 2px 0 !important;
+} 
         }
     </style>
 </head>
